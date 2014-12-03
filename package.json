@@ -1,0 +1,15 @@
+{
+  "name": "qube",
+  "version": "0.0.0",
+  "description": "Hyper-cube calculation engine",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "devDependencies": {
+  	"mocha": "*",
+  	"chai": "*"
+  },
+  "author": "Benjamin Norrington",
+  "license": "AGPL v3.0"
+}
