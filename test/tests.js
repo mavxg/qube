@@ -170,3 +170,40 @@ describe('Namespaces', function() {
 		assert.equal(d, 15);
 	})
 })
+
+
+describe('KeyDefs', function() {
+	it('No Category Override', function() {
+		var qube = new Qube(prelude);
+		qube.expr(['KeyDefs',['Symbol','B'], s('{1,2,3}')[0]]);
+		qube.exprs(s('A = B * C\nC[] = {3,4,5}'));
+		qube.build();
+
+		var sum = qube.eval(s('Sum(A[B,C])')[0]);
+
+		assert.equal(sum, 72);
+	})
+
+	it('With Category Override', function() {
+		var qube = new Qube(prelude);
+		qube.expr(['KeyDefs',['Symbol','B'], s('{1,2,3}')[0]]);
+		qube.exprs(s('A = B * C\nC[] = {3,4,5}\nB[] = {1,2,3}'));
+		qube.build();
+
+		var sum = qube.eval(s('Sum(A[B,C])')[0]);
+
+		assert.equal(sum, 72);
+	})
+
+	it('Double KeyDef', function() {
+		var qube = new Qube(prelude);
+		qube.expr(['KeyDefs',['Symbol','B'], s('{1,2}')[0]]);
+		qube.exprs(s('A = B * C\nC[] = {3,4,5}'));
+		qube.expr(['KeyDefs',['Symbol','B'], s('{3,1}')[0]]);
+		qube.build();
+
+		var sum = qube.eval(s('Sum(A[B,C])')[0]);
+
+		assert.equal(sum, 72);
+	})
+})
