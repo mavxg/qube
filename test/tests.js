@@ -144,7 +144,7 @@ describe('Namespaces', function() {
 	it('Lambda function', function() {
 		var qube = new Qube(prelude);
 		var subspace = ['Namespace', null];
-		Array.prototype.push.apply(subspace, s('B[] = {1,2,3}\nC[] = {3,4,5}\nD = Sum(map((a) -> a + 1, C[C]))'));
+		Array.prototype.push.apply(subspace, s('B[] = {1,2,3}\nC[] = {3,4,5}\nD = Sum(Map((a) -> a + 1, C[C]))'));
 		subspace = ['Set', ['Symbol', 'X'], subspace];
 		qube.exprs(s('A = X.B * X.C'));
 		qube.expr(subspace);
@@ -160,7 +160,7 @@ describe('Namespaces', function() {
 	it('Namespace macro', function() {
 		var qube = new Qube(prelude);
 		qube.exprs(s('A = X.B * X.C'));
-		qube.exprs(s('Namespace(X, B[] = {1,2,3},C[] = {3,4,5},D = Sum(map((a) -> a + 1, C[C])))'));
+		qube.exprs(s('Namespace(X, B[] = {1,2,3},C[] = {3,4,5},D = Sum(Map((a) -> a + 1, C[C])))'));
 		qube.build();
 
 		var sum = qube.eval(s('Sum(A[X.B,X.C])')[0]);
@@ -186,7 +186,7 @@ describe('KeyDefs', function() {
 
 	it('With Category Override', function() {
 		var qube = new Qube(prelude);
-		qube.expr(['KeyDefs',['Symbol','B'], s('{1,2,3}')[0]]);
+		qube.expr(['KeyDefs',['Symbol','B'], s('{1,2}')[0]]);
 		qube.exprs(s('A = B * C\nC[] = {3,4,5}\nB[] = {1,2,3}'));
 		qube.build();
 
