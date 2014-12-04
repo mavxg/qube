@@ -3,13 +3,17 @@ Qube
 
 Hyper-cube calculation engine
 
+## Install
+
+npm install mavxg/qube
+
 ## Usage
 
     var ql = require('qube');
     var prelude = ql.prelude;
     var lex = ql.lex;
     var parse = ql.parse;
-    var Qube = ql;
+    var Qube = ql.Qube;
     
     function s(code) { return parse(lex(code)); }
     
