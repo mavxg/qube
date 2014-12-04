@@ -2,11 +2,13 @@ var chai = require('chai');
 var expect = chai.expect;
 var assert = chai.assert;
 
-var qube = require('../');
-var Qube = qube.Qube;
-var prelude = qube.prelude;
-var lex = qube.lex;
-var parse = qube.parse;
+var ql = require('../');
+var Qube = ql.Qube;
+var prelude = ql.prelude;
+var lex = ql.lex;
+var parse = ql.parse;
+
+var expandNamespace = require('../lib/qube').expandNamespace;
 
 function s(str) { return parse(lex(str)); }
 
@@ -93,12 +95,14 @@ describe('Eval', function() {
 describe('Namespaces', function() {
 	it('Un Nested', function() {
 		var qube = new Qube(prelude);
-		var subspace = ['Do'];
+		var subspace = ['Namespace', null];
 		Array.prototype.push.apply(subspace, s('B[] = {1,2,3}\nC[] = {3,4,5}'));
+		var ex = '["Do",["Set",["Slice",["Symbol","B"]],["List",["Number",1],["Number",2],["Number",3]]],["Set",["Slice",["Symbol","C"]],["List",["Number",3],["Number",4],["Number",5]]]]'
 		qube.exprs(s('A = B * C'));
-		qube.expr(subspace);
+		var cell = qube.expr(subspace);
 		qube.build();
-
+		//console.log(JSON.stringify(cell.sexpr));
+		//console.log(ex);
 		var sum = qube.eval(s('Sum(A[B,C])')[0]);
 
 		assert.equal(sum, 72);
@@ -106,22 +110,25 @@ describe('Namespaces', function() {
 
 	it('Single Nested', function() {
 		var qube = new Qube(prelude);
-		var subspace = ['Do'];
-		Array.prototype.push.apply(subspace, s('B[] = {1,2,3}\nC[] = {3,4,5}'));
+		var subspace = ['Namespace', null];
+		Array.prototype.push.apply(subspace, s('B[] = {1,2,3}\nC[] = {3,4,5}\nD = Sum(C[C])'));
+		subspace = ['Set', ['Symbol', 'X'], subspace];
 		qube.exprs(s('A = X.B * X.C'));
-		qube.expr(['Set', ['Symbol', 'X'], subspace]);
+		qube.expr(subspace);
 		qube.build();
 
 		var sum = qube.eval(s('Sum(A[X.B,X.C])')[0]);
+		var d = qube.eval(s('X.D')[0]);  //ensure Call not namespaced
 
 		assert.equal(sum, 72);
+		assert.equal(d, 12);
 	})
 
 	it('Double Nested', function() {
 		var qube = new Qube(prelude);
-		var subsubspace = ['Do'];
+		var subsubspace = ['Namespace', null];
 		Array.prototype.push.apply(subsubspace, s('C[] = {3,4,5}'));
-		var subspace = ['Do'];
+		var subspace = ['Namespace', null];
 		var c = s('B[] = {1,2,3}\nY = ');
 		c[1][2] = subsubspace;
  		Array.prototype.push.apply(subspace, c);
@@ -132,5 +139,34 @@ describe('Namespaces', function() {
 		var sum = qube.eval(s('Sum(A[X.B,X.Y.C])')[0]);
 
 		assert.equal(sum, 72);
+	})
+
+	it('Lambda function', function() {
+		var qube = new Qube(prelude);
+		var subspace = ['Namespace', null];
+		Array.prototype.push.apply(subspace, s('B[] = {1,2,3}\nC[] = {3,4,5}\nD = Sum(map((a) -> a + 1, C[C]))'));
+		subspace = ['Set', ['Symbol', 'X'], subspace];
+		qube.exprs(s('A = X.B * X.C'));
+		qube.expr(subspace);
+		qube.build();
+
+		var sum = qube.eval(s('Sum(A[X.B,X.C])')[0]);
+		var d = qube.eval(s('X.D')[0]);  //ensure Call not namespaced
+
+		assert.equal(sum, 72);
+		assert.equal(d, 15);
+	})
+
+	it('Namespace macro', function() {
+		var qube = new Qube(prelude);
+		qube.exprs(s('A = X.B * X.C'));
+		qube.exprs(s('Namespace(X, B[] = {1,2,3},C[] = {3,4,5},D = Sum(map((a) -> a + 1, C[C])))'));
+		qube.build();
+
+		var sum = qube.eval(s('Sum(A[X.B,X.C])')[0]);
+		var d = qube.eval(s('X.D')[0]);  //ensure Call not namespaced
+
+		assert.equal(sum, 72);
+		assert.equal(d, 15);
 	})
 })
