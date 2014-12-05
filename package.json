@@ -11,5 +11,10 @@
   	"chai": "*"
   },
   "author": "Benjamin Norrington",
-  "license": "AGPL v3.0"
+  "licenses": [
+    {
+      "type": "AGPL v3.0",
+      "url": "https://github.com/mavxg/slatejs/raw/master/LICENSE"
+    }
+  ]
 }

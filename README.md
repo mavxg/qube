@@ -29,3 +29,8 @@ npm install mavxg/qube
 
     qube.eval(s('D')[0]);
 
+## TODO
+
+[] Change api to .define(enumarable of sexprs) -> [Cell] and .eval(sexpr) -> result. 
+[] Change parse to always return single sexpr
+[] Wrap Qube as MQube which takes mexprs and runs s on them.
