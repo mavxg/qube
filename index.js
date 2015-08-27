@@ -1,4 +1,4 @@
-var parser = require('./parser');
+var parser = require('./lib/parser');
 
 module.exports = {
 	Qube:    require('./lib/qube').Qube,
