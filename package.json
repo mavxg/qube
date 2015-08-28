@@ -6,6 +6,11 @@
   "scripts": {
     "test": "mocha"
   },
+  "dependencies": {
+    "moment": "^2.10.6",
+    "numeral": "^1.5.3",
+    "moment-business": "2.0.0"
+  },
   "devDependencies": {
   	"mocha": "*",
   	"chai": "*"

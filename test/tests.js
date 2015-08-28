@@ -65,6 +65,27 @@ describe('Dimension analysis', function() {
 		expect(qube.ast).to.have.property('C')
 			.with.property('dimensions').with.length(1);
 	})
+
+	it('Multiple dimension slice', function() {
+		var qube = new Qube({});
+		qube.exprs(s('A[] = {1,2,3}\nB[] = {1,2,3}\nC = A * B\nD = C[A=1]'));
+		qube.build();
+
+		expect(qube.dimensions).to.have.property('A');
+		expect(qube.dimensions).to.have.property('B');
+
+		expect(qube.ast).to.have.property('A')
+			.with.property('dimensions').with.length(1);
+
+		expect(qube.ast).to.have.property('B')
+			.with.property('dimensions').with.length(1);
+
+		expect(qube.ast).to.have.property('C')
+			.with.property('dimensions').with.length(2);
+
+		expect(qube.ast).to.have.property('D')
+			.with.property('dimensions').with.length(1);
+	})
 })
 
 describe('Slice', function() {
