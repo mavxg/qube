@@ -162,6 +162,22 @@ describe('Namespaces', function() {
 		assert.equal(sum, 72);
 	})
 
+	it('Double Nested Named', function() {
+		var qube = new Qube(prelude);
+		var subsubspace = ['Namespace',['Symbol','H']]
+		Array.prototype.push.apply(subsubspace, s('A[]= {3,4,5}\nB = A * 10'));
+		var subspace = ['Namespace',['Symbol','Z'],subsubspace];
+		Array.prototype.push.apply(subspace, s('C[] = {1,2,3}\nD = C * C'));
+		qube.expr(subspace);
+		qube.build();
+
+		//var sum = qube.eval(s('Sum(Z.H.B[Z.H.A])')[0]);
+		//var sum = qube.eval(s('Sum(Z.H.D[Z.H.C])')[0]); //This works and shouldn't
+		var sum = qube.eval(s('Sum(Z.D[Z.C])')[0]); //This doesn't work
+
+		assert.equal(sum, 14);
+	})
+
 	it('Lambda function', function() {
 		var qube = new Qube(prelude);
 		var subspace = ['Namespace', null];
