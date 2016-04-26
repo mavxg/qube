@@ -20,6 +20,12 @@ describe('Lexer', function() {
 })
 
 describe('Parser', function() {
+	it('Empty Bracket', function() {
+		var qube = new Qube(prelude);
+		var sum = qube.eval(s('(()->72)()')[0]);
+
+		assert.equal(sum, 72);
+	})
 })
 
 describe('Dimension analysis', function() {
