@@ -6,6 +6,10 @@
   "scripts": {
     "test": "mocha"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mavxg/qube.git"
+  },
   "dependencies": {
     "moment": "^2.10.6",
     "numeral": "^1.5.3",
